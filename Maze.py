@@ -328,7 +328,7 @@ class Maze:
             i += 1
         return laby  # on retourne le labyrinthe
 
-    """@classmethod
+    @classmethod
     def gen_exploration(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
@@ -337,23 +337,30 @@ class Maze:
         pile = [(i, j)]  # ajout de la cellule dans pile
 
         while pile:
+
             temp = pile[0]  # variable temporaire avec la cellule
+            print("temp :" ,temp)
             del pile[0]  # suppression de la cellulle dans pile
             voisins = laby.get_contiguous_cells(temp)  # recuperation des voisins de la cellule
+            print("voisins :", voisins)
 
-            if voisins not in visite:
-                pile = [temp] + pile  # ajout de la cellule sur la pile
-                for k in voisins:
-                    if k in visite:
-                        del k  # suppression des voisins visite dans voisins
-                cel = voisins[randint(0, len(voisins) - 1)]  # selection d'un voisin aleatoire
-                laby.remove_wall(temp, cel)  # suppression du mur entre la cellule et son voisin choisi
-                visite.append(cel)  # ajout du voisin dans visite
-                pile = [cel] + pile  # ajout du voisin sur la pile
+            for k in voisins:
+                if k in visite:
+                    del voisins[]
+
+            pile = [temp] + pile
+            prochain = randint(0, len(voisins)-1)
+            print("prochain :", prochain)
+            cel = voisins[prochain]  # selection d'un voisin aleatoire
+            print("cel :", cel)
+            laby.remove_wall(temp, cel)  # suppression du mur entre la cellule et son voisin choisi
+            visite.append(cel)  # ajout du voisin dans visite
+            pile = [cel] + pile  # ajout du voisin sur la pile
+            print("pile :", pile)
 
         return laby
 
-    @classmethod
+    """@classmethod
     def gen_wilson(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins

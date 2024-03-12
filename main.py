@@ -98,16 +98,16 @@ print(laby.get_reachable_cells((0, 1)))"""
 
 """ PARTIE 5 """
 """laby = Maze.gen_btree(4, 4)
-print(laby)
-
-laby = Maze.gen_sidewinder(4, 4)
 print(laby)"""
 
+"""laby = Maze.gen_sidewinder(4, 4)
+print(laby)
+
 laby = Maze.gen_fusion(5, 5)
+print(laby)"""
+
+laby = Maze.gen_exploration(5, 5)
 print(laby)
 
-"""laby = Maze.gen_exploration(15, 15)
-print(laby)
-
-laby = Maze.gen_wilson(12, 12)
+"""laby = Maze.gen_wilson(12, 12)
 print(laby)"""
