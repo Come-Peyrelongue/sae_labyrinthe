@@ -259,18 +259,26 @@ class Maze:
         laby = Maze(h, w, empty=False)  # initialisation labyrinthe avec mur
         label = []  # label = liste vide
         a = 0  # initialisation de a à 0
+        print(laby)
         for i in range(h):
             for j in range(w):  # parcour des cellules du laby
-                label.append([a, (i, j)])  # chaque index du dictionnaire correspond a un label
+                label.append([a, (i, j)])  # chaque index de la liste correspond a un label
                 a += 1  # ajout de 1 à a
+        print("label :", label)
         shuffle(label)  # mélange de la liste
+        print("label :", label)
         k = 0
-
         # ALGO
         while k < len(label):  # pour chaque cellule de la liste
+            print("k :", k)
             l = 0
             modif = False  # nombre de modifications max par cellule k = 1
             while l < len(label) and not modif:  # pour chaque cellule de la liste
+                print("l :", l)
+                print("label[k] :", label[k])
+                print("label[l] :", label[l])
+                print("label[l][1] :", label[l][1])
+                print(f"voisins {label[k][1]} :", laby.get_contiguous_cells(label[k][1]))
                 if (label[l][1] in laby.get_contiguous_cells(label[k][1])
                         and label[k][0] != label[l][0]):  # si une cellule est voisine avec une autre et ne possède
                     # pas le même label
@@ -279,17 +287,48 @@ class Maze:
                     # Modification du label
                     b = 0
                     while b < len(label):
+                        print("label[b] :", label[b])
                         if label[b][0] == label[l][0] or label[b][0] == label[k][0]:  # pour chaque cellule ayant un
                             # label identique à k ou à l
+                            print("label[b] :", label[b])
                             label[b][0] = min(label[l][0], label[k][0])  # on met le label minimum entre les 2 pour
                             # la cellule b
+                            print("label[b][0] :", label[b][0])
                         b += 1
-                    modif = True
+                    modif = True  # modification faite
+
+                    print(laby)
                 l += 1
             k += 1
+
+        print("label :", label)
+
+        accessible = False
+        i = 0
+        while i < len(label) and not accessible:
+            if label[i][0] != label[i + 1][0]:
+                voisinsJ = laby.get_contiguous_cells(label[i + 1][1])
+                while not accessible:
+                    j = 0
+                    x = randint(0, len(voisinsJ))
+                    labelJ = -1
+                    while j < len(label) and labelJ != -1:
+                        if x == label[j][1]:
+                            labelJ = label[j][0]
+                        else:
+                            j += 1
+                    print("voisinsJ :", voisinsJ)
+                    print("labelJ :", labelJ)
+                    print("label[j][1] :", label[j][1])
+                    print("label[j][0] :", label[j][0])
+                    if voisinsJ[x] == label[j][1] and labelJ == label[j][0]:
+                        accessible = True
+                    else:
+                        voisinsJ.pop(x)
+            i += 1
         return laby  # on retourne le labyrinthe
 
-    @classmethod
+    """@classmethod
     def gen_exploration(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
@@ -314,7 +353,7 @@ class Maze:
 
         return laby
 
-    """@classmethod
+    @classmethod
     def gen_wilson(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
@@ -350,6 +389,4 @@ class Maze:
                 for i in range(1, len(visite)):
                     temp2 = visite[i]
                     marque[temp2[0]][temp2[1]] = True     # marquage des"""
-
-
 """                    laby.remove_wall(visite[i - 1], temp)"""
