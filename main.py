@@ -1,7 +1,7 @@
 from Maze import *
 
 """ PARTIE 3 """
-laby = Maze(4, 4, empty = False)
+"""laby = Maze(4, 4, empty = False)
 print(laby.info())
 print(laby)
 
@@ -69,10 +69,10 @@ laby = Maze(4, 4, empty = True)
 print(laby)
 
 laby = Maze(4, 4, empty = False)
-print(laby)
+print(laby)"""
 
 """ PARTIE 4 """
-laby = Maze(5, 5, empty = True)
+"""laby = Maze(5, 5, empty = True)
 print(laby)
 
 laby.add_wall((0, 0), (0, 1))
@@ -90,24 +90,24 @@ laby.add_wall((0, 0), (0, 1))
 laby.add_wall((0, 1), (1, 1))
 print(laby)
 
-print(laby.get_walls())
+# print(laby.get_walls())
 
 print(laby.get_contiguous_cells((0, 1)))
 
-print(laby.get_reachable_cells((0, 1)))
+print(laby.get_reachable_cells((0, 1)))"""
 
 """ PARTIE 5 """
-laby = Maze.gen_btree(4, 4)
+"""laby = Maze.gen_btree(4, 4)
 print(laby)
 
 laby = Maze.gen_sidewinder(4, 4)
+print(laby)"""
+
+laby = Maze.gen_fusion(5, 5)
 print(laby)
 
-laby = Maze.gen_fusion(15, 15)
-print(laby)
-
-laby = Maze.gen_exploration(15, 15)
+"""laby = Maze.gen_exploration(15, 15)
 print(laby)
 
 laby = Maze.gen_wilson(12, 12)
-print(laby)
+print(laby)"""

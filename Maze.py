@@ -1,5 +1,6 @@
 from random import *
 
+
 class Maze:
     """
     Classe Labyrinthe
@@ -209,18 +210,18 @@ class Maze:
     @classmethod
     def gen_btree(cls, h, w):
 
-        laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
+        laby = Maze(h, w, empty=False)  # initialisation d'un labyrinthe sans voisins (plein)
 
         for i in range(h):
-            for j in range(w):  # on parcour le labyrinthe
-                a = randint(0, 25)  # on crée a entier aléatoire
+            for j in range(w):  # parcour du labyrinthe
+                a = randint(0, 25)  # création de a un entier aléatoire
 
-                if (a <= 15 and j + 1 <= h - 1) or (
-                        i == h - 1 and j + 1 <= h - 1):  # Si (i,j) et (i,j+1) sont dans le labyrinthe et a inférieur ou égale a 15 ou que i,j est au bord
+                # Si (i,j) et (i,j+1) sont dans le labyrinthe et a inférieur ou égale a 15 ou que i,j est au bord
+                if (a <= 15 and j + 1 <= h - 1) or (i == h - 1 and j + 1 <= h - 1):
                     laby.remove_wall((i, j), (i, j + 1))  # on l'ajoute
 
-                if (a >= 10 and i + 1 <= w - 1) or (
-                        j == w - 1 and i + 1 <= w - 1):  # Si (i,j) et (i+1,j) sont dans le labyrinthe et a supérieur ou égale a 10 ou que i,j est au bord
+                # Si (i,j) et (i+1,j) sont dans le labyrinthe et a supérieur ou égale a 10 ou que i,j est au bord
+                if (a >= 10 and i + 1 <= w - 1) or (j == w - 1 and i + 1 <= w - 1):
                     laby.remove_wall((i, j), (i + 1, j))  # on l'ajoute
 
         return laby
@@ -228,13 +229,13 @@ class Maze:
     @classmethod
     def gen_sidewinder(cls, h, w):
 
-        laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
+        laby = Maze(h, w, empty=False)  # initialisation d'un labyrinthe sans voisins (plein)
 
         for i in range(h - 1):
-            sequence = []  # initialisation de sequence
+            sequence = []  # initialisation de la séquence
 
             for j in range(w - 1):
-                sequence.append((i, j))  # ajout de la cellule dans la sequence
+                sequence.append((i, j))  # ajout de la cellule dans la séquence
                 piece = randint(0, 1)  # tirage Pile ou Face
 
                 if piece == 0:
@@ -254,20 +255,38 @@ class Maze:
 
     @classmethod
     def gen_fusion(cls, h, w):
+        # INITIALISATION
         laby = Maze(h, w, empty=False)  # initialisation labyrinthe avec mur
-        label = {}  # label = dictionnaire
+        label = []  # label = liste vide
         a = 0  # initialisation de a à 0
         for i in range(h):
             for j in range(w):  # parcour des cellules du laby
-                label[a] = (i, j)  # chaque index du dictionnaire correspond a un label
+                label.append([a, (i, j)])  # chaque index du dictionnaire correspond a un label
                 a += 1  # ajout de 1 à a
-        random.shuffle(label)  # mélange du dictionnaire
-        for k in label:  # pour toutes les cellules du disctionaire
-            for l in label:  # pour toutes les cellules du disctionaire
-                if (k in self.neighbors[l]):  # si une cellule est voissine avec une autre
-                    laby.remove_wall(k, l)  # retirer le mur entre elle
-                    label[k] += label[l]  # on ajoute label[l] au label[k]
-                    label.pop(l)  # on supprime label[l] du dictionnaire
+        shuffle(label)  # mélange de la liste
+        k = 0
+
+        # ALGO
+        while k < len(label):  # pour chaque cellule de la liste
+            l = 0
+            modif = False  # nombre de modifications max par cellule k = 1
+            while l < len(label) and not modif:  # pour chaque cellule de la liste
+                if (label[l][1] in laby.get_contiguous_cells(label[k][1])
+                        and label[k][0] != label[l][0]):  # si une cellule est voisine avec une autre et ne possède
+                    # pas le même label
+                    laby.remove_wall(label[k][1], label[l][1])  # retirer le mur entre elle
+
+                    # Modification du label
+                    b = 0
+                    while b < len(label):
+                        if label[b][0] == label[l][0] or label[b][0] == label[k][0]:  # pour chaque cellule ayant un
+                            # label identique à k ou à l
+                            label[b][0] = min(label[l][0], label[k][0])  # on met le label minimum entre les 2 pour
+                            # la cellule b
+                        b += 1
+                    modif = True
+                l += 1
+            k += 1
         return laby  # on retourne le labyrinthe
 
     @classmethod
@@ -295,7 +314,7 @@ class Maze:
 
         return laby
 
-    @classmethod
+    """@classmethod
     def gen_wilson(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
@@ -330,7 +349,7 @@ class Maze:
 
                 for i in range(1, len(visite)):
                     temp2 = visite[i]
-                    marque[temp2[0]][temp2[1]] = True     # marquage des
-                    laby.remove_wall(visite[i - 1], temp)       # suppresion des murs
+                    marque[temp2[0]][temp2[1]] = True     # marquage des"""
 
-        return laby
+
+"""                    laby.remove_wall(visite[i - 1], temp)"""
