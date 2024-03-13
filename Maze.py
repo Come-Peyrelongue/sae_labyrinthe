@@ -339,24 +339,26 @@ class Maze:
         while pile:
 
             temp = pile[0]  # variable temporaire avec la cellule
-            print("temp :" ,temp)
+            print("temp :",temp)
             del pile[0]  # suppression de la cellulle dans pile
             voisins = laby.get_contiguous_cells(temp)  # recuperation des voisins de la cellule
             print("voisins :", voisins)
+            voisinsNonVisite = []
 
             for k in voisins:
-                if k in visite:
-                    del voisins[]
+                if k not in visite:
+                    voisinsNonVisite.append(k)
 
-            pile = [temp] + pile
-            prochain = randint(0, len(voisins)-1)
-            print("prochain :", prochain)
-            cel = voisins[prochain]  # selection d'un voisin aleatoire
-            print("cel :", cel)
-            laby.remove_wall(temp, cel)  # suppression du mur entre la cellule et son voisin choisi
-            visite.append(cel)  # ajout du voisin dans visite
-            pile = [cel] + pile  # ajout du voisin sur la pile
-            print("pile :", pile)
+            if voisinsNonVisite :
+                pile = [temp] + pile
+                prochain = randint(0, len(voisinsNonVisite)-1)
+                print("prochain :", prochain)
+                cel = voisinsNonVisite[prochain]  # selection d'un voisin aleatoire
+                print("cel :", cel)
+                laby.remove_wall(temp, cel)  # suppression du mur entre la cellule et son voisin choisi
+                visite.append(cel)  # ajout du voisin dans visite
+                pile = [cel] + pile  # ajout du voisin sur la pile
+                print("pile :", pile)
 
         return laby
 
