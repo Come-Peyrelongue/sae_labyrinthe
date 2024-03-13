@@ -256,79 +256,57 @@ class Maze:
     @classmethod
     def gen_fusion(cls, h, w):
         # INITIALISATION
-        laby = Maze(h, w, empty=False)  # initialisation labyrinthe avec mur
-        label = []  # label = liste vide
-        a = 0  # initialisation de a à 0
-        print(laby)
+        laby = Maze(h, w, empty=False)  # initialisation labyrinth avec mur
+
+        # initialisation des labels associé à leur cellule
+        label = []
+        a = 0
         for i in range(h):
             for j in range(w):  # parcour des cellules du laby
                 label.append([a, (i, j)])  # chaque index de la liste correspond a un label
                 a += 1  # ajout de 1 à a
-        print("label :", label)
-        shuffle(label)  # mélange de la liste
-        print("label :", label)
-        k = 0
+
+        # initialisation des arêtes
+        aretes = []
+        for i in range(h):
+            for j in range(w):
+                voisins = laby.get_contiguous_cells((i, j))  # récupération de la liste des voisins de la cellule (i, j)
+                for k in range(len(voisins)):
+                    if [voisins[k], (i, j)] not in aretes and [(i, j), voisins[k]] not in aretes:
+                        aretes.append([(i, j), voisins[k]])  # ajout des arêtes
+        print(laby)
+        shuffle(aretes)
+        print(aretes)
+
         # ALGO
-        while k < len(label):  # pour chaque cellule de la liste
-            print("k :", k)
-            l = 0
-            modif = False  # nombre de modifications max par cellule k = 1
-            while l < len(label) and not modif:  # pour chaque cellule de la liste
-                print("l :", l)
-                print("label[k] :", label[k])
-                print("label[l] :", label[l])
-                print("label[l][1] :", label[l][1])
-                print(f"voisins {label[k][1]} :", laby.get_contiguous_cells(label[k][1]))
-                if (label[l][1] in laby.get_contiguous_cells(label[k][1])
-                        and label[k][0] != label[l][0]):  # si une cellule est voisine avec une autre et ne possède
-                    # pas le même label
-                    laby.remove_wall(label[k][1], label[l][1])  # retirer le mur entre elle
 
-                    # Modification du label
-                    b = 0
-                    while b < len(label):
-                        print("label[b] :", label[b])
-                        if label[b][0] == label[l][0] or label[b][0] == label[k][0]:  # pour chaque cellule ayant un
-                            # label identique à k ou à l
-                            print("label[b] :", label[b])
-                            label[b][0] = min(label[l][0], label[k][0])  # on met le label minimum entre les 2 pour
-                            # la cellule b
-                            print("label[b][0] :", label[b][0])
-                        b += 1
-                    modif = True  # modification faite
+        for i in range(len(aretes)):
+            # récupération des labels des cellules A et B
+            labelA = -1
+            labelB = -1
+            a = 0
+            while (labelA == -1 or labelB == -1) and a < len(label):
+                if label[a][1] == aretes[i][0] and labelA == -1:
+                    labelA = label[a][0]
+                elif label[a][1] == aretes[i][1] and labelB == -1:
+                    labelB = label[a][0]
+                else:
+                    a += 1
 
-                    print(laby)
-                l += 1
-            k += 1
+            # suppresion du mur et modification des labels
+            if labelA != labelB:
+                laby.remove_wall(aretes[i][0], aretes[i][1])
+                c = 0
+                while c < len(label):
+                    if label[c][0] == labelA or label[c][0] == labelB:  # pour chaque cellule ayant un label
+                        # identique à la cellule A ou à la cellule B
+                        label[c][0] = min(labelA, labelB)  # on met le label minimum entre les 2 pour la cellule c
+                    c += 1
+            print(laby)
 
-        print("label :", label)
+        return laby
 
-        accessible = False
-        i = 0
-        while i < len(label) and not accessible:
-            if label[i][0] != label[i + 1][0]:
-                voisinsJ = laby.get_contiguous_cells(label[i + 1][1])
-                while not accessible:
-                    j = 0
-                    x = randint(0, len(voisinsJ))
-                    labelJ = -1
-                    while j < len(label) and labelJ != -1:
-                        if x == label[j][1]:
-                            labelJ = label[j][0]
-                        else:
-                            j += 1
-                    print("voisinsJ :", voisinsJ)
-                    print("labelJ :", labelJ)
-                    print("label[j][1] :", label[j][1])
-                    print("label[j][0] :", label[j][0])
-                    if voisinsJ[x] == label[j][1] and labelJ == label[j][0]:
-                        accessible = True
-                    else:
-                        voisinsJ.pop(x)
-            i += 1
-        return laby  # on retourne le labyrinthe
-
-    """@classmethod
+    @classmethod
     def gen_exploration(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
@@ -337,23 +315,33 @@ class Maze:
         pile = [(i, j)]  # ajout de la cellule dans pile
 
         while pile:
+
             temp = pile[0]  # variable temporaire avec la cellule
+            print("temp :",temp)
             del pile[0]  # suppression de la cellulle dans pile
             voisins = laby.get_contiguous_cells(temp)  # recuperation des voisins de la cellule
+            print("voisins :", voisins)
+            voisinsNonVisite = []
 
-            if voisins not in visite:
-                pile = [temp] + pile  # ajout de la cellule sur la pile
-                for k in voisins:
-                    if k in visite:
-                        del k  # suppression des voisins visite dans voisins
-                cel = voisins[randint(0, len(voisins) - 1)]  # selection d'un voisin aleatoire
+            for k in voisins:
+                if k not in visite:
+                    voisinsNonVisite.append(k)
+
+            if voisinsNonVisite :
+                pile = [temp] + pile
+                prochain = randint(0, len(voisinsNonVisite)-1)
+                print("prochain :", prochain)
+                cel = voisinsNonVisite[prochain]  # selection d'un voisin aleatoire
+                print("cel :", cel)
                 laby.remove_wall(temp, cel)  # suppression du mur entre la cellule et son voisin choisi
                 visite.append(cel)  # ajout du voisin dans visite
                 pile = [cel] + pile  # ajout du voisin sur la pile
+                print("pile :", pile)
 
         return laby
 
-    @classmethod
+
+    """@classmethod
     def gen_wilson(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins

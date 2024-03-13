@@ -104,9 +104,9 @@ laby = Maze.gen_sidewinder(4, 4)
 print(laby)"""
 
 laby = Maze.gen_fusion(5, 5)
-print(laby)
+"""print(laby)
 
-"""laby = Maze.gen_exploration(15, 15)
+laby = Maze.gen_exploration(15, 15)
 print(laby)
 
 laby = Maze.gen_wilson(12, 12)
