@@ -307,6 +307,7 @@ class Maze:
         return laby
 
     @classmethod
+
     def gen_exploration(cls, h, w):
 
         laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
@@ -339,7 +340,6 @@ class Maze:
                 print("pile :", pile)
 
         return laby
-
 
     """@classmethod
     def gen_wilson(cls, h, w):
