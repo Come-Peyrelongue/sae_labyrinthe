@@ -110,7 +110,7 @@ print(laby)
 laby = Maze.gen_exploration(15, 15)
 print(laby)"""
 
-laby = Maze.gen_wilson(5, 5)
+laby = Maze.gen_wilson_test(5, 5)
 
 #print(laby)
 

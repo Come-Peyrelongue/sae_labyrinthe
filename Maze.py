@@ -346,7 +346,7 @@ class Maze:
             for l in range(w):
                 ligneMarque.append(False)
             marque.append(ligneMarque)  # ajout de toute les cellules en False a marque
-        marque[cel[0]][cel[1]] = True  # passage de la cellule a True dans marque
+        marque[cel[0]][cel[1]] = True  # passage de la cellule initiale a True dans marque
         visite = []
         plein = False
         print("marque :", marque)
@@ -385,5 +385,44 @@ class Maze:
                     plein = plein and marque[p][k]
 
             print(laby)
+
+        return laby
+
+    @classmethod
+    def gen_wilson_test(cls, h, w):
+
+        visite = []
+
+        laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
+        celAleatoire = (randint(0, h-1), randint(0, w-1)) # on pose deux entiers aléatoires
+        cellulesMarque = [celAleatoire]
+
+        while cellulesMarque :
+            celluleDepart = (randint(0, h-1), randint(0, w-1))
+            while celluleDepart in cellulesMarque:
+                celluleDepart = (randint(0, h - 1), randint(0, w - 1))
+            print("Cellule Départ :",celluleDepart)
+
+            voisins = laby.get_contiguous_cells(celluleDepart)
+            print("Voisins :",voisins)
+            print("-----------------------")
+            cel2 = voisins[randint(0, len(voisins))]
+            while cel2 == celluleDepart:
+                celluleDepart = (randint(0, h - 1), randint(0, w - 1))
+            visite.append(celluleDepart)
+
+            while cel2 not in cellulesMarque and cel2 not in visite:
+                print("Cellule Départ :", celluleDepart, "cel2 :", cel2)
+                laby.remove_wall(celluleDepart, cel2)  # suppression du mur entre la cellule et son voisin choisi
+                celluleDepart = cel2
+                voisins = laby.get_contiguous_cells(celluleDepart)
+                print("Voisins :",voisins)
+                cel2 = voisins[randint(0, len(voisins))]
+                while cel2 == celluleDepart :
+                    celluleDepart = (randint(0, h - 1), randint(0, w - 1))
+                print(cel2)
+                visite.append(celluleDepart)
+                print(visite)
+                print(laby)
 
         return laby
