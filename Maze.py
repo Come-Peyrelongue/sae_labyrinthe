@@ -393,3 +393,130 @@ class Maze:
                 listeCelluleVisitee.sort()
 
         return laby
+
+    def overlay(self, content=None):
+        """
+        Rendu en mode texte, sur la sortie standard, \
+        d'un labyrinthe avec du contenu dans les cellules
+        Argument:
+            content (dict) : dictionnaire tq content[cell] contient le caractère à afficher au milieu de la cellule
+        Retour:
+            string
+        """
+        if content is None:
+            content = {(i, j): ' ' for i in range(self.height) for j in range(self.width)}
+        else:
+            # Python >=3.9
+            # content = content | {(i, j): ' ' for i in range(
+            #    self.height) for j in range(self.width) if (i,j) not in content}
+            # Python <3.9
+            new_content = {(i, j): ' ' for i in range(self.height) for j in range(self.width) if (i, j) not in content}
+            content = {**content, **new_content}
+        txt = r""
+        # Première ligne
+        txt += "┏"
+        for j in range(self.width - 1):
+            txt += "━━━┳"
+        txt += "━━━┓\n"
+        txt += "┃"
+        for j in range(self.width - 1):
+            txt += " " + content[(0, j)] + " ┃" if (0, j + 1) not in self.neighbors[(0, j)] else " " + content[
+                (0, j)] + "  "
+        txt += " " + content[(0, self.width - 1)] + " ┃\n"
+        # Lignes normales
+        for i in range(self.height - 1):
+            txt += "┣"
+            for j in range(self.width - 1):
+                txt += "━━━╋" if (i + 1, j) not in self.neighbors[(i, j)] else "   ╋"
+            txt += "━━━┫\n" if (i + 1, self.width - 1) not in self.neighbors[(i, self.width - 1)] else "   ┫\n"
+            txt += "┃"
+            for j in range(self.width):
+                txt += " " + content[(i + 1, j)] + " ┃" if (i + 1, j + 1) not in self.neighbors[(i + 1, j)] else " " + \
+                                                                                                                 content[(
+                                                                                                                 i + 1,
+                                                                                                                 j)] + "  "
+            txt += "\n"
+        # Bas du tableau
+        txt += "┗"
+        for i in range(self.width - 1):
+            txt += "━━━┻"
+        txt += "━━━┛\n"
+        return txt
+
+    def solve_dfs(self, start, stop):
+        # INITIALISATION
+        chemin = []
+        pile = [start]
+        marque = [start]
+        pred = {start: start}
+        flag = False
+
+        # RECHERCHE DES PREDECESSEUR
+        # tant que la pile n'est pas vide ou que la fin n'est pas atteinte
+        while pile and not flag:
+            c = pile[0]
+            pile.pop(0)
+
+            # si la fin est atteinte
+            if c == stop:
+                flag = True
+            else:
+                voisins = self.get_reachable_cells(c)
+
+                # pour chaque voisin de c
+                for voisin in voisins:
+
+                    # si le voisin n'est pas marqué
+                    if voisin not in marque:
+                        marque.append(voisin)
+                        pile = [voisin] + pile
+                        pred[voisin] = c
+
+        # RECONSTRUCTION DU CHEMIN A PARTIR DES PREDECESSEUR
+        c = stop  # initialisation de c à la cellule d'arrivée
+        # tant que c est différent du départ
+        while c != start:
+            chemin.append(c)
+            c = pred[c]
+        chemin.append(start)  # ajout de la cellule de départ
+
+        return chemin
+
+    def solve_bfs(self, start, stop):
+        # INITIALISATION
+        chemin = []
+        file = [start]
+        marque = [start]
+        pred = {start: start}
+        flag = False
+
+        # RECHERCHE DES PREDECESSEUR
+        # tant que la pile n'est pas vide ou que la fin n'est pas atteinte
+        while file and not flag:
+            c = file[0]
+            file.pop(0)
+
+            # si la fin est atteinte
+            if c == stop:
+                flag = True
+            else:
+                voisins = self.get_reachable_cells(c)
+
+                # pour chaque voisin de c
+                for voisin in voisins:
+
+                    # si le voisin n'est pas marqué
+                    if voisin not in marque:
+                        marque.append(voisin)
+                        file += [voisin]
+                        pred[voisin] = c
+
+        # RECONSTRUCTION DU CHEMIN A PARTIR DES PREDECESSEUR
+        c = stop  # initialisation de c à la cellule d'arrivée
+        # tant que c est différent du départ
+        while c != start:
+            chemin.append(c)
+            c = pred[c]
+        chemin.append(start)  # ajout de la cellule de départ
+
+        return chemin
