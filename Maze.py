@@ -520,3 +520,57 @@ class Maze:
         chemin.append(start)  # ajout de la cellule de départ
 
         return chemin
+
+    def solve_rhr(self, start, stop):
+        # INITIALISATION
+        chemin = []
+        pile = [start]
+        marque = [start]
+        pred = {start: start}
+        flag = False
+
+        # RECHERCHE DES PREDECESSEUR
+        # tant que la pile n'est pas vide ou que la fin n'est pas atteinte
+        while pile and not flag:
+            c = pile[0]
+            pile.pop(0)
+
+            # si la fin est atteinte
+            if c == stop:
+                flag = True
+            else:
+                voisins = self.get_reachable_cells(c)
+
+                # si le voisin à l'Est n'est pas marqué
+                if (c[0], c[1] + 1) in voisins and (c[0], c[1] + 1) not in marque:
+                    marque.append((c[0], c[1] + 1))
+                    pile = [(c[0], c[1] + 1)] + pile
+                    pred[(c[0], c[1] + 1)] = c
+
+                # si le voisin au Sud n'est pas marqué
+                if (c[0] + 1, c[1]) in voisins and (c[0] + 1, c[1]) not in marque:
+                    marque.append((c[0] + 1, c[1]))
+                    pile = [(c[0] + 1, c[1])] + pile
+                    pred[(c[0] + 1, c[1])] = c
+
+                # si le voisin à l'Ouest n'est pas marqué
+                if (c[0], c[1] - 1) in voisins and (c[0], c[1] - 1) not in marque:
+                    marque.append((c[0], c[1] - 1))
+                    pile = [(c[0], c[1] - 1)] + pile
+                    pred[(c[0], c[1] - 1)] = c
+
+                # si le voisin au Nord n'est pas marqué
+                if (c[0] - 1, c[1]) in voisins and (c[0] - 1, c[1]) not in marque:
+                    marque.append((c[0] - 1, c[1]))
+                    pile = [(c[0] - 1, c[1])] + pile
+                    pred[(c[0] - 1, c[1])] = c
+
+        # RECONSTRUCTION DU CHEMIN A PARTIR DES PREDECESSEUR
+        c = stop  # initialisation de c à la cellule d'arrivée
+        # tant que c est différent du départ
+        while c != start:
+            chemin.append(c)
+            c = pred[c]
+        chemin.append(start)  # ajout de la cellule de départ
+
+        return chemin
