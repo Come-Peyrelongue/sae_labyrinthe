@@ -336,147 +336,60 @@ class Maze:
 
     @classmethod
     def gen_wilson(cls, h, w):
-        # INITIALISATION
-        laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
-        cel = (randint(0, h - 1), randint(0, w - 1))  # selection d'une cellule aleatoire
-
-        marque = []  # initialisation de la liste marque
-        for k in range(h):
-            ligneMarque = []
-            for l in range(w):
-                ligneMarque.append(False)
-            marque.append(ligneMarque)  # ajout de toute les cellules en False a marque
-        marque[cel[0]][cel[1]] = True  # passage de la cellule a True dans marque
-
-        visite = []
-        plein = False
-        print("marque :", marque)
-        print(laby)
-
-        # ALGO
-        while not plein:
-            print("visite :", visite)
-            depart = cel
-
-            while marque[depart[0]][depart[1]]:
-                depart = randint(0, h - 1), randint(0, w - 1)  # selection d'une cellule de depart aleatoire
-            cel1 = depart
-            temp = [cel1]       # initialisation d'une liste temporaire avec la cellule de depart
-            print("cel :", cel, "/ depart :", depart)
-            print("temp :", temp)
-            cel2 = cel1  # initalise la 1ere cellule avec la 2e pour la première boucle boucle
-            while not marque[cel1[0]][cel1[1]] or cel1 not in visite:
-
-                voisins = laby.get_contiguous_cells(cel2)  # recuperation des voisins de la cellule
-                cel1 = voisins[randint(0, len(voisins) - 1)]  # selection d'un voisin aleatoire
-                print(f"voisins de {cel2}:", voisins)
-                print("cel2 :", cel2, "cel1 :", cel1)
-                laby.remove_wall(cel1, cel2)  # suppression du mur entre la cellule et son voisin choisi
-                temp.append(cel2)       # ajout de la cellule 2 dans la liste temporaire
-                cel1 = cel2
-
-                if cel2 in visite:      # cas du serpent qui se mort la queue
-                    del temp        # supression des passage dans la liste
-                else:
-                    for n in range(len(temp)):
-                        visite.append(temp[n])      # ajout du chemin dans visite
-
-                for i in range(1, len(visite)):
-                    temp2 = visite[i]
-                    marque[temp2[0]][temp2[1]] = True     # marquage des
-
-            for p in range(len(marque)):
-                for k in range(len(marque[p])):
-                    plein = plein and marque[p][k]
-
-            print(laby)
-
-        return laby
-
-    @classmethod
-    def gen_wilson_test(cls, h, w):
-
-        laby = Maze(h, w, empty=False)  # on initialise un labyrinthe sans voisins
-        celAleatoire = (randint(0, h - 1), randint(0, w - 1))  # on pose deux entiers aléatoires
-        cellulesMarque = [celAleatoire]
-        print(laby)
-        cellulesNonMarque = []
+        laby = Maze(h, w, empty=False)  # on initialise un labyrinthe avec voisins
+        # récupération de chaque cellulue du labyrinthe
+        listeCellule = []
         for i in range(h):
             for j in range(w):
-                if (i, j) != celAleatoire:
-                    cellulesNonMarque.append((i, j))
+                listeCellule.append((i, j))
+        listeCelluleVisitee = []  # liste des cellules visitée
 
-        tour_max = 15
-        tour_actuelle = 0
-        while cellulesNonMarque and tour_actuelle < tour_max:
-            celluleDepart = cellulesNonMarque[randint(0, len(cellulesNonMarque)-1)]
-            while celluleDepart in cellulesMarque:
-                celluleDepart = (randint(0, h - 1), randint(0, w - 1))
-            print("Cellule Départ :", celluleDepart)
-            print("Cellules marqué :", cellulesMarque)
-            print("Cellules non marqué :", cellulesNonMarque)
+        # choix d'une cellule de départ aléatoire
+        celluleAleatoire = choice(listeCellule)
+        listeCelluleVisitee.append(celluleAleatoire)
 
-            voisins = laby.get_contiguous_cells(celluleDepart)
-            print(f"Voisins de {celluleDepart} :", voisins)
-            cel2 = voisins[randint(0, len(voisins)-1)]
-            print("cel2 :", cel2)
+        while len(listeCelluleVisitee) != len(listeCellule):
+            celluleDepart = choice(listeCellule)
 
-            while cel2 == celluleDepart:
-                celluleDepart = cellulesNonMarque[randint(0, len(cellulesNonMarque)-1)]
-            visite = [celluleDepart]
-            modif = False
-            celluleInitiale = celluleDepart
-            print("visite :", visite)
-            print("-----------------------")
+            while celluleDepart in listeCelluleVisitee:
+                celluleDepart = choice(listeCellule)
+            listeChemin = [celluleDepart]
+            flag = False
+            celluleAleatoire = choice(laby.get_contiguous_cells(celluleDepart))
 
-            while cel2 not in cellulesMarque and cel2 not in visite:
+            while not flag and celluleAleatoire not in listeChemin:
+                listeChemin.append(celluleAleatoire)
+                retour = False
 
-                # cas du serpent qui se mord la queue
-                if cel2 in visite:
-                    indexTete = -1
-                    i = 0
-                    # recherche de l'index de la cellule "mordu"
-                    while i < len(visite) and indexTete == -1:
-                        if cel2 == visite[i]:
-                            indexTete = i + 1
+                if listeChemin[-1] not in listeCelluleVisitee:
+                    temp = celluleAleatoire
+                    if celluleAleatoire not in listeChemin:
+                        listeChemin.append(celluleAleatoire)
+                        celluleAleatoire = choice(laby.get_contiguous_cells(temp))
+                    i = len(listeChemin) - 1
+                    compte = 0
+                    while celluleAleatoire in listeChemin and compte < len(laby.get_contiguous_cells(temp)):
+                        voisins = laby.get_contiguous_cells(listeChemin[i])
+                        if compte == 0:
+                            shuffle(voisins)
+                        if retour:
+                            listeChemin.append(listeChemin[i])
+                        if compte == len(laby.get_contiguous_cells(temp)):
+                            compte = 0
+                            i -= 1
+                            retour = True
                         else:
-                            i += 1
+                            celluleAleatoire = voisins[compte]
+                            compte += 1
+                else:
+                    listeChemin.append(celluleAleatoire)
+                    flag = True
 
-                    # suppression des cellules du chemin de boucle
-                    for j in range(indexTete, len(visite)-1):
-                        visite.remove(visite[j])
-
-                print("Cellule Départ :", celluleDepart, "/ cel2 :", cel2)
-                celluleDepart = cel2
-                voisins = laby.get_contiguous_cells(celluleDepart)
-                print("Voisins :", voisins)
-                cel2 = voisins[randint(0, len(voisins)-1)]
-                visite.append(celluleDepart)
-                modif = True
-                print("Cellule Départ :", celluleDepart, "/ cel2 :", cel2)
-                print("visite :", visite)
-                print("-----------------------")
-
-            if modif:
-                i = 0
-                while i < len(visite):
-                    cel = visite[i]
-                    if cel not in cellulesMarque:
-                        print("celluleInitiale :", celluleInitiale, "/ cel :", cel)
-                        print("visite :", visite)
-
-                        # suppression du mur entre la cellule et son voisin choisi
-                        laby.remove_wall(celluleInitiale, cel)
-                        cellulesMarque.append(cel)
-                        visite.remove(cel)
-                        cellulesNonMarque.remove(cel)
-                        celluleInitiale = cel
-
-            print(laby)
-            print("Cellules marqué :", cellulesMarque)
-            print("Cellules non marqué :", cellulesNonMarque)
-            print("visite :", visite)
-            print("-----------------------")
-            tour_actuelle += 1
+            if flag:
+                for i in range(len(listeChemin)-2):
+                    if listeChemin[i] not in listeCelluleVisitee:
+                        listeCelluleVisitee.append(listeChemin[i])
+                    laby.remove_wall(listeChemin[i], listeChemin[i + 1])
+                listeCelluleVisitee.sort()
 
         return laby
