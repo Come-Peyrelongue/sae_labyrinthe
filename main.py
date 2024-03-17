@@ -147,3 +147,31 @@ str_solution = {c: '*' for c in solution}
 str_solution[(0,  0)] = 'D'
 str_solution[(14, 14)] = 'A'
 print(laby.overlay(str_solution))
+
+"""
+8.1 : À faire (question ouverte)
+Imaginer une ou plusieurs manières de compliquer les labyrinthes générés.
+
+Afin de compliquer les labyrinthes générés, il est possible d'utiliser plusieurs méthodes :
+
+- Introduire des pièges ou des obstacles : On pourrait ajouter des zones dans le labyrinthe qui représentent des 
+pièges ou des obstacles, obligeant ainsi le joueur à trouver un chemin spécifique pour les contourner ou les éviter. 
+Nous pensions notamment à des caisses, des balles, des bombes... Nous pourrions même rajouter des adversaires ou des 
+monstres à éviter avec une notion de vie qui diminue.
+
+- Augmenter la complexité des passages : Au lieu d'avoir des passages simples entre les cellules, on 
+pourrait introduire des passages étroits, des passages en zigzag ou des passages avec des portes à déverrouiller, 
+rendant la navigation plus difficile.
+
+- Incorporer des zones de téléportation : Des portails, comme dans le jeu Portal 2. On pourrait rajouter des zones 
+dans le labyrinthe qui téléportent le joueur vers un autre emplacement aléatoire du labyrinthe, ce qui ajouterait 
+une dimension de surprise et de défi.
+
+- Implémenter des mécanismes de temps ou de limite de mouvements : Introduire un élément temporelle ou limiter le 
+nombre de mouvements autorisés pour résoudre le labyrinthe, ce qui obligerait à prendre des décisions stratégiques 
+plus rapidement.
+
+- Ajouter des énigmes ou des puzzles : Intégrer des énigmes ou des puzzles dans certaines parties du labyrinthe, 
+nécessitant au joueur de résoudre des problèmes logiques ou mathématiques pour avancer. Cela boost l'apprentissage, 
+tout en augmentant significativement la difficulté.
+"""
